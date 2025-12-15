@@ -1,4 +1,4 @@
-<img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/8b3bab1e-4b9f-477e-b1b3-bf9141e0a02e" /><img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/fb871ac9-0f78-450d-892d-6255c7d5c8f1" /># 🎮 2048 Game - Flutter Implementation
+<img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/8b3bab1e-4b9f-477e-b1b3-bf9141e0a02e" />
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.19-blue)
 ![Dart](https://img.shields.io/badge/Dart-3.0-blue)
@@ -62,7 +62,7 @@ lib/
 <img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/05edf2b7-e71b-4ebd-abfa-37070e856180" />
 <img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/6da2edd7-721b-4cf8-86e8-d5a44f812a05" />
 <img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/b823a6cd-7652-4557-ab4f-e3be9be297d2" />
-<img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/b3533c38-c03c-4dea-aac9-7fb60b5d2f73" />
+<img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/8b3bab1e-4b9f-477e-b1b3-bf9141e0a02e" />
 
 
 
