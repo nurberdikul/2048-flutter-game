@@ -1,4 +1,3 @@
-<img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/8b3bab1e-4b9f-477e-b1b3-bf9141e0a02e" />
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.19-blue)
 ![Dart](https://img.shields.io/badge/Dart-3.0-blue)
