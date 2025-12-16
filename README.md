@@ -22,8 +22,11 @@ Where it is used:
 It is used to create instances of the game engine (GameEngine) and the history manager (CommandManager) depending on the selected game mode.
 Problem it Solves:
 Decouples the UI (HomePage) from the specific logic of initializing different game modes. It allows adding new modes (e.g., "Time Attack") without modifying the interface code.
+
 Code Example:
+
 <img width="490" height="580" alt="image" src="https://github.com/user-attachments/assets/0f1e9d7b-0adf-4732-bb14-17e9058097b5" />
+
 
 
 
@@ -32,8 +35,11 @@ Where it is used:
 This pattern is the core of the move management system. It encapsulates every player action (swipe) into a separate object, enabling the Undo functionality.
 Problem it Solves:
 Eliminates the need for a massive controller class that handles game state. It encapsulates the request as an object, allowing for parameterization of clients with different requests, queueing, and supporting undoable operations.
+
 Code Example:
+
 <img width="362" height="750" alt="image" src="https://github.com/user-attachments/assets/477c9cb5-62ee-42b7-8b9e-9e6926640002" />
+
 
 
 
@@ -42,8 +48,11 @@ Where it is used:
 Used to dynamically alter the visual appearance of tiles (skins/themes) without changing their internal structure or duplicating rendering logic.
 Problem it Solves:
 Allows adding new visual behaviors (colors, fonts, styles) to objects individually and dynamically, adhering to the Open/Closed Principle.
+
 Code Example:
+
 <img width="396" height="814" alt="image" src="https://github.com/user-attachments/assets/db4ad275-6d3f-4ae9-8e9e-e646e3304b6d" />
+
 
 
 
@@ -52,8 +61,11 @@ Where it is used:
 Used for the ScoreManager to manage global high scores.
 Problem it Solves:
 Ensures a class has only one instance and provides a global point of access to it. This prevents data inconsistency where different screens might show different high scores.
+
 Code Example:
+
 <img width="421" height="484" alt="image" src="https://github.com/user-attachments/assets/ba0c3035-a941-4fcb-8862-069cc63a7021" />
+
 
 
 
@@ -112,7 +124,8 @@ lib/
 ├── main.dart                  # Entry point
 ├── main_menu.dart             # Main menu
 ├── score_manager.dart         # Management with scores 
-└── tile_component.dart        # Decorator Pattern 
+└── tile_component.dart        # Decorator Pattern
+```
 
 <img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/c6fc598b-3687-48ac-a70a-259eb108d98c" />
 <img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/93148032-b7f5-44df-bc5a-8e6d32ec1ce3" />
