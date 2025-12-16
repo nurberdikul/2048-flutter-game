@@ -23,30 +23,8 @@ It is used to create instances of the game engine (GameEngine) and the history m
 Problem it Solves:
 Decouples the UI (HomePage) from the specific logic of initializing different game modes. It allows adding new modes (e.g., "Time Attack") without modifying the interface code.
 Code Example:
-Dart
-// lib/game_factory.dart
+<img width="490" height="580" alt="image" src="https://github.com/user-attachments/assets/0f1e9d7b-0adf-4732-bb14-17e9058097b5" />
 
-abstract class GameFactory {
-  GameEngine createGameEngine(int size);
-  CommandManager createCommandManager();
-}
-
-// Concrete Factory for the "Challenge" mode
-class ChallengeGameFactory implements GameFactory {
-  @override
-  GameEngine createGameEngine(int size) {
-    final engine = GameEngine(size);
-    // Logic specific to Challenge mode: add an extra random tile at start
-    engine.addRandomTile(); 
-    return engine;
-  }
-  
-  @override
-  CommandManager createCommandManager() {
-    // Challenge mode allows fewer undos (history limit = 5)
-    return CommandManager()..setMaxHistory(5); 
-  }
-}
 
 
 2.2. Command
@@ -55,33 +33,8 @@ This pattern is the core of the move management system. It encapsulates every pl
 Problem it Solves:
 Eliminates the need for a massive controller class that handles game state. It encapsulates the request as an object, allowing for parameterization of clients with different requests, queueing, and supporting undoable operations.
 Code Example:
-Dart
-// lib/command/move_command.dart
+<img width="362" height="750" alt="image" src="https://github.com/user-attachments/assets/477c9cb5-62ee-42b7-8b9e-9e6926640002" />
 
-class MoveCommand implements GameCommand {
-  final CommandReceiver _receiver; // Reference to game logic interface
-  List<List<int>>? _previousGrid;  // Memento (State Snapshot)
-  
-  @override
-  void execute() {
-    // 1. Save state BEFORE the move (Snapshot)
-    _previousGrid = _receiver.copyGrid();
-    
-    // 2. Execute the move logic
-    switch (_direction) {
-      case Direction.left: _receiver.performMoveLeft(); break;
-      // ... other directions
-    }
-  }
-  
-  @override
-  void undo() {
-    // 3. Restore state upon Undo
-    if (_previousGrid != null) {
-      _receiver.setGrid(_previousGrid!);
-    }
-  }
-}
 
 
 2.3. Decorator
@@ -90,31 +43,8 @@ Used to dynamically alter the visual appearance of tiles (skins/themes) without 
 Problem it Solves:
 Allows adding new visual behaviors (colors, fonts, styles) to objects individually and dynamically, adhering to the Open/Closed Principle.
 Code Example:
-Dart
-// lib/tile_component.dart
+<img width="396" height="814" alt="image" src="https://github.com/user-attachments/assets/db4ad275-6d3f-4ae9-8e9e-e646e3304b6d" />
 
-// 1. Base Component (Simple gray tile with a number)
-class BaseTile implements TileComponent {
-  final int value;
-  // ... standard text rendering
-}
-
-// 2. Decorator (Adds specific 2048 colors)
-class ColoredTileDecorator implements TileComponent {
-  final int _value;
-  
-  // Wraps the base tile
-  ColoredTileDecorator(BaseTile tile) : _value = tile.value;
-  
-  @override
-  Widget build(double size) {
-    // Adds background color logic around the base content
-    return Container(
-      color: _getColor(), // Color logic is encapsulated here
-      child: Center(child: Text('$_value')),
-    );
-  }
-}
 
 
 2.4. Singleton
@@ -123,20 +53,8 @@ Used for the ScoreManager to manage global high scores.
 Problem it Solves:
 Ensures a class has only one instance and provides a global point of access to it. This prevents data inconsistency where different screens might show different high scores.
 Code Example:
-Dart
-// lib/score_manager.dart
+<img width="421" height="484" alt="image" src="https://github.com/user-attachments/assets/ba0c3035-a941-4fcb-8862-069cc63a7021" />
 
-class ScoreManager {
-  // Static field to hold the single instance
-  static final ScoreManager _instance = ScoreManager._internal();
-
-  // Factory constructor always returns the same instance
-  factory ScoreManager() => _instance;
-  
-  ScoreManager._internal(); // Private constructor
-  
-  // Methods for saving/loading scores...
-}
 
 
 3. Application of SOLID Principles
@@ -182,6 +100,7 @@ Controls:
 The 2048 Flutter project demonstrates a professional approach to mobile application development. The use of Factory, Command, Decorator, and Singleton patterns ensures architectural flexibility, allowing new features to be introduced without refactoring the core logic. The project fully complies with modern industry standards (Clean Architecture, SOLID).
 
 
+```text
 lib/
 ├── command/                   # Command Pattern 
 │   ├── command_interface.dart
