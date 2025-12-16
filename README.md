@@ -4,55 +4,196 @@
 ![Design Patterns](https://img.shields.io/badge/Design%20Patterns-3-green)
 ![SOLID](https://img.shields.io/badge/SOLID-5%20principles-green)
  
-✅ **Полностью функциональное приложение с нуля**  
-✅ **3 паттерна из разных категорий**  
-✅ **Соблюдение SOLID принципов**  
+📱 2048 Flutter: Software Design Specification
+1. Introduction
+2048 Flutter is a cross-platform mobile application representing an advanced version of the classic 2048 puzzle game. The project is built using the Dart language and the Flutter framework.
+The key feature of this project is the implementation of a Clean Architecture based on classic GoF (Gang of Four) Design Patterns. This approach ensures code modularity, high testability, and the ability to easily scale functionality (adding new modes, themes, and mechanics).
+Key Features:
+Multi-Mode Support: Standard Mode and "Challenge Mode" (with higher difficulty).
+Adaptive Grid: Selectable grid sizes from 3x3 to 6x6.
+Undo System: Implementation of move cancellation using a Command stack.
+Dynamic Theming: Change visual themes (Classic, Minimal, Rainbow) at runtime.
+Progress Persistence: Global high score management.
 
-## 🏗️ Архитектура и паттерны
+2. Design Patterns
+The project implements four key architectural patterns to solve specific design problems. Below is a detailed description of each, accompanied by source code examples.
+2.1. Factory Method
+Where it is used:
+It is used to create instances of the game engine (GameEngine) and the history manager (CommandManager) depending on the selected game mode.
+Problem it Solves:
+Decouples the UI (HomePage) from the specific logic of initializing different game modes. It allows adding new modes (e.g., "Time Attack") without modifying the interface code.
+Code Example:
+Dart
+// lib/game_factory.dart
 
-### 1. **Factory Method Pattern** (Creational)
-- `GameFactory` → `StandardGameFactory`, `ChallengeGameFactory`
-- `TileFactory` → `DefaultTileFactory`, `MinimalTileFactory`, `RainbowTileFactory`
+abstract class GameFactory {
+  GameEngine createGameEngine(int size);
+  CommandManager createCommandManager();
+}
 
-### 2. **Decorator Pattern** (Structural)
-- `TileComponent` ← `BaseTile` ← `ColoredTileDecorator` ← `RainbowTile`
-- Динамическое изменение внешнего вида плиток
+// Concrete Factory for the "Challenge" mode
+class ChallengeGameFactory implements GameFactory {
+  @override
+  GameEngine createGameEngine(int size) {
+    final engine = GameEngine(size);
+    // Logic specific to Challenge mode: add an extra random tile at start
+    engine.addRandomTile(); 
+    return engine;
+  }
+  
+  @override
+  CommandManager createCommandManager() {
+    // Challenge mode allows fewer undos (history limit = 5)
+    return CommandManager()..setMaxHistory(5); 
+  }
+}
 
-### 3. **Command Pattern** (Behavioral)
-- `GameCommand` ← `MoveCommand`
-- `CommandManager` для управления историей и отменой ходов
 
-## 📐 SOLID Principles
+2.2. Command
+Where it is used:
+This pattern is the core of the move management system. It encapsulates every player action (swipe) into a separate object, enabling the Undo functionality.
+Problem it Solves:
+Eliminates the need for a massive controller class that handles game state. It encapsulates the request as an object, allowing for parameterization of clients with different requests, queueing, and supporting undoable operations.
+Code Example:
+Dart
+// lib/command/move_command.dart
 
-| Принцип | Реализация |
-|---------|------------|
-| **Single Responsibility** | Каждый класс имеет одну ответственность |
-| **Open/Closed** | Код открыт для расширения, закрыт для модификации |
-| **Liskov Substitution** | Подклассы заменяют родительские классы |
-| **Interface Segregation** | Маленькие, специфичные интерфейсы |
-| **Dependency Inversion** | Зависимости от абстракций, а не реализаций |
+class MoveCommand implements GameCommand {
+  final CommandReceiver _receiver; // Reference to game logic interface
+  List<List<int>>? _previousGrid;  // Memento (State Snapshot)
+  
+  @override
+  void execute() {
+    // 1. Save state BEFORE the move (Snapshot)
+    _previousGrid = _receiver.copyGrid();
+    
+    // 2. Execute the move logic
+    switch (_direction) {
+      case Direction.left: _receiver.performMoveLeft(); break;
+      // ... other directions
+    }
+  }
+  
+  @override
+  void undo() {
+    // 3. Restore state upon Undo
+    if (_previousGrid != null) {
+      _receiver.setGrid(_previousGrid!);
+    }
+  }
+}
 
-## 🎮 Функциональность
 
-- Полная игра 2048 с логикой слияния плиток
-- Система отмены ходов (Command Pattern)
-- 3 визуальные темы (Decorator Pattern)
-- 2 режима игры (Factory Method Pattern)
-- Адаптивный UI для разных размеров экрана
-- Управление свайпами и кнопками
+2.3. Decorator
+Where it is used:
+Used to dynamically alter the visual appearance of tiles (skins/themes) without changing their internal structure or duplicating rendering logic.
+Problem it Solves:
+Allows adding new visual behaviors (colors, fonts, styles) to objects individually and dynamically, adhering to the Open/Closed Principle.
+Code Example:
+Dart
+// lib/tile_component.dart
+
+// 1. Base Component (Simple gray tile with a number)
+class BaseTile implements TileComponent {
+  final int value;
+  // ... standard text rendering
+}
+
+// 2. Decorator (Adds specific 2048 colors)
+class ColoredTileDecorator implements TileComponent {
+  final int _value;
+  
+  // Wraps the base tile
+  ColoredTileDecorator(BaseTile tile) : _value = tile.value;
+  
+  @override
+  Widget build(double size) {
+    // Adds background color logic around the base content
+    return Container(
+      color: _getColor(), // Color logic is encapsulated here
+      child: Center(child: Text('$_value')),
+    );
+  }
+}
+
+
+2.4. Singleton
+Where it is used:
+Used for the ScoreManager to manage global high scores.
+Problem it Solves:
+Ensures a class has only one instance and provides a global point of access to it. This prevents data inconsistency where different screens might show different high scores.
+Code Example:
+Dart
+// lib/score_manager.dart
+
+class ScoreManager {
+  // Static field to hold the single instance
+  static final ScoreManager _instance = ScoreManager._internal();
+
+  // Factory constructor always returns the same instance
+  factory ScoreManager() => _instance;
+  
+  ScoreManager._internal(); // Private constructor
+  
+  // Methods for saving/loading scores...
+}
+
+
+3. Application of SOLID Principles
+The project architecture strictly adheres to SOLID principles, ensuring the system remains maintainable and extensible.
+3.1. Single Responsibility Principle (SRP)
+A class should have one, and only one, reason to change.
+Implementation: We separated game logic, rendering, and history management.
+GameEngine: Handles ONLY matrix mathematics.
+TileComponent: Handles ONLY visual rendering.
+CommandManager: Handles ONLY the history stack.
+Benefit: Changing the tile design (View) will never break the game rules (Model).
+3.2. Open/Closed Principle (OCP)
+Software entities should be open for extension, but closed for modification.
+Implementation: The theming system uses the Decorator pattern. To add a "Neon" theme, we simply create a new NeonTileDecorator class.
+Benefit: We extend functionality without opening or modifying the stable BaseTile code, reducing the risk of bugs.
+3.3. Liskov Substitution Principle (LSP)
+Subtypes must be substitutable for their base types.
+Implementation: The HomePage accepts the abstract GameFactory interface. It functions correctly regardless of whether StandardGameFactory or ChallengeGameFactory is passed.
+Benefit: The UI is decoupled from specific game modes.
+3.4. Interface Segregation Principle (ISP)
+Clients should not be forced to depend on methods they do not use.
+Implementation: The GameCommand interface contains only execute() and undo(). It does not force commands to implement unnecessary methods like serialize() or logAnalytics().
+Benefit: Keeps the CommandManager lightweight and focused.
+3.5. Dependency Inversion Principle (DIP)
+High-level modules should not depend on low-level modules. Both should depend on abstractions.
+Implementation: The MoveCommand (Business Logic) does not depend on HomePageState (UI). Instead, it depends on the CommandReceiver interface.
+Benefit: Allows unit testing of game moves without launching the Flutter graphical interface.
+
+4. User Manual
+Getting Started
+Launch the application.
+In the Main Menu, select a game mode:
+Standard Game: Classic 4x4 experience.
+Challenge Mode: Harder start, limited undos.
+Optionally, change the grid size in the "Grid Size" menu (3x3 to 6x6).
+Gameplay
+Objective: Swipe (Up, Down, Left, Right) to merge tiles with the same number to reach 2048.
+Controls:
+↩️ Undo: Reverts the last move (uses Command pattern).
+🎨 Theme: Changes the visual style of tiles instantly.
+🔄 New Game: Resets the current session.
+5. Conclusion
+The 2048 Flutter project demonstrates a professional approach to mobile application development. The use of Factory, Command, Decorator, and Singleton patterns ensures architectural flexibility, allowing new features to be introduced without refactoring the core logic. The project fully complies with modern industry standards (Clean Architecture, SOLID).
+
 
 lib/
-├── command/                   # Паттерн Command
+├── command/                   # Command Pattern 
 │   ├── command_interface.dart
 │   ├── command_manager.dart
 │   └── move_command.dart
-├── game_engine.dart           # Логика игры
-├── game_factory.dart          # Паттерн Factory Method
-├── home.dart                  # Игровой экран
-├── main.dart                  # Точка входа
-├── main_menu.dart             # Главное меню
-├── score_manager.dart         # Управление очками
-└── tile_component.dart        # Паттерн Decorator
+├── game_engine.dart           # Logic of the game
+├── game_factory.dart          # Factory Method Pattern
+├── home.dart                  # Game screen
+├── main.dart                  # Entry point
+├── main_menu.dart             # Main menu
+├── score_manager.dart         # Management with scores 
+└── tile_component.dart        # Decorator Pattern 
 
 <img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/c6fc598b-3687-48ac-a70a-259eb108d98c" />
 <img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/93148032-b7f5-44df-bc5a-8e6d32ec1ce3" />
